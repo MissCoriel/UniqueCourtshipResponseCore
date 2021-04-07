@@ -1,0 +1,11 @@
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\ResponseCore.dll
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\ResponseCore.pdb
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\obj\Debug\ResponseCore.csproj.CoreCompileInputs.cache
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\obj\Debug\ResponseCore.dll
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\obj\Debug\ResponseCore.pdb
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\manifest.json
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\i18n\Default.json
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\obj\Debug\ResponseCore.csprojAssemblyReference.cache
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\ModEntry.cs
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\i18n\es.json
+E:\Stardew Vally Modding\Stardew Valley Response\ResponseCore\bin\Debug\i18n\zh.json
