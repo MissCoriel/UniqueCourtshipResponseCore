@@ -1,7 +1,7 @@
 ﻿{
   "Name": "Unique Response Core",
   "Author": "MissCoriel",
-  "Version": "2.0",
+  "Version": "2.1.6",
   "Description": "Primary Core for use in Unique Courtship response.",
   "UniqueID": "misscoriel.UCRFix",
   "EntryDll": "ResponseCore.dll",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -9,7 +10,7 @@ using StardewValley.Menus;
 
 namespace ResponseCore
 {
-    public class ModEntry : Mod, IAssetEditor
+    public class ModEntry : Mod
     {
         private Dictionary<string, string> DefaultDialog;
         private Dictionary<string, string> CoreDialogue;
@@ -48,6 +49,17 @@ namespace ResponseCore
                 ["giftquestion_yes"] = Helper.Translation.Get("giftquestion_yes"),
                 ["giftquestion_lie"] = Helper.Translation.Get("giftquestion_lie"),
                 ["breakUp"] = Helper.Translation.Get("breakUp"),
+                ["baby_anxiety"] = Helper.Translation.Get("baby_anxiety"),
+                ["adopt_excitedA"] = Helper.Translation.Get("adopt_excitedA"),
+                ["adopt_excitedB"] = Helper.Translation.Get("adopt_excitedB"),
+                ["morningsick"] = Helper.Translation.Get("morningsick"),
+                ["moodyPregnant"] = Helper.Translation.Get("moodyPregnant"),
+                ["informPregnancyA"] = Helper.Translation.Get("informPregnancyA"),
+                ["informPregnancyB"] = Helper.Translation.Get("informPregnancyB"),
+                ["yourePregnantA"] = Helper.Translation.Get("yourePregnantA"),
+                ["yourePregnantB"] = Helper.Translation.Get("yourePregnantB"),
+                ["annoyedParent"] = Helper.Translation.Get("annoyedParent"),
+                ["aloneTime"] = Helper.Translation.Get("aloneTime"),
             };
             this.CoreDialogue = new Dictionary<string, string>
             {
@@ -79,42 +91,63 @@ namespace ResponseCore
                 ["NPC.cs.4279"] = Helper.Translation.Get("NPC.cs.4279"),
                 ["NPC.cs.4280"] = Helper.Translation.Get("NPC.cs.4280"),
                 ["NPC.cs.4281"] = Helper.Translation.Get("NPC.cs.4281"),
+                ["NPC.cs.3985"] = Helper.Translation.Get("NPC.cs.3985"),
+                ["NPC.cs.4439"] = Helper.Translation.Get("NPC.cs.4439"),
+                ["NPC.cs.4440"] = Helper.Translation.Get("NPC.cs.4440"),
+                ["NPC.cs.4441"] = Helper.Translation.Get("NPC.cs.4441"),
+                ["NPC.cs.4442"] = Helper.Translation.Get("NPC.cs.4442"),
+                ["NPC.cs.4443"] = Helper.Translation.Get("NPC.cs.4444"),
+                ["NPC.cs.4445"] = Helper.Translation.Get("NPC.cs.4445"),
+                ["NPC.cs.4447"] = Helper.Translation.Get("NPC.cs.4447"),
+                ["NPC.cs.4448"] = Helper.Translation.Get("NPC.cs.4448"),
+                ["NPC.cs.4449"] = Helper.Translation.Get("NPC.cs.4449"),
+                ["NPC.cs.4452"] = Helper.Translation.Get("NPC.cs.4452"),
             };
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
+            helper.Events.Content.AssetReady += this.AssetReady;
         }
-
-        public bool CanEdit<T>(IAssetInfo asset)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (asset.AssetName.StartsWith(PathUtilities.NormalizePath("Characters/Dialogue/")))
+            if (e.Name.IsDirectlyUnderPath("Characters/Dialogue"))
             {
-                return true;
-            }
-            else if (asset.AssetName.Equals(PathUtilities.NormalizePath("Strings/StringsFromCSFiles")))
-            {
-                return true;
-            }
-            else return false;
-        }
-        public void Edit<T>(IAssetData asset)
-        {
-            if (asset.AssetName.StartsWith(PathUtilities.NormalizePath("Characters/Dialogue/")))
-            {
-                var dialog = asset.AsDictionary<string, string>().Data;
-                foreach (var pair in this.DefaultDialog)
+                e.Edit(asset =>
                 {
-                    if (!dialog.ContainsKey(pair.Key))
+                    var dialog = asset.AsDictionary<string, string>().Data;
+                    foreach (var pair in this.DefaultDialog)
+                    {
+                        if (!dialog.ContainsKey(pair.Key))
+                            dialog[pair.Key] = pair.Value;
+                    }
+                });
+            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Strings/StringsFromCSFiles"))
+            {
+                e.Edit(asset =>
+                {
+                    var dialog = asset.AsDictionary<string, string>().Data;
+                    foreach (var pair in this.CoreDialogue)
+                    {
                         dialog[pair.Key] = pair.Value;
-                }
-
+                    }
+                });
             }
-            if (asset.AssetNameEquals(PathUtilities.NormalizePath("Strings/StringsFromCSFiles")))
+        }
+        private void AssetReady(object sender, AssetReadyEventArgs e)
+        {
+
+            if (e.NameWithoutLocale.IsEquivalentTo("Strings/StringsFromCSFiles"))
             {
-                var dialog = asset.AsDictionary<string, string>().Data;
-                foreach (var pair in this.CoreDialogue)
+                var data = Game1.content.Load<Dictionary<string, string>>("Strings/StringsFromCSFiles");
+                foreach((string key, string expectedText) in this.CoreDialogue)
                 {
-                    dialog[pair.Key] = pair.Value;
+                    if (!data.TryGetValue(key, out string? actualText))
+                        Monitor.Log($"Core Dialogue Error! Dialogue Key {key} has been overridden!\n Expected Value: {expectedText}.\n Received Value: (not found).",LogLevel.Error);
+                    else if (actualText != expectedText)
+                        Monitor.Log($"Core Dialogue Error! Dialogue Key {key} has been overridden!\n Expected Value: {expectedText}.\n Received Value: {actualText}.", LogLevel.Error);
+                    else
+                        Monitor.Log($"Core Dialogue Check Complete!", LogLevel.Debug);
                 }
             }
         }
-
     }
 }
